@@ -1,0 +1,26 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Event page</h1>
+
+    {% if event %}
+    
+    <h2>
+        <a> {{ event.name }}</a>
+    </h2>
+   
+    <ul>
+      <li>Type: {{ event.type }}</li> 
+      <li>Address: {{ event.address }}</li>
+      <li>Data: {{ event.data }}</li>
+      <li>Start time: {{ event.start_time }}</li> 
+      <li>Decription: {{ event.description }}</li>
+      <li>Age minimum: {{ event.age_minimum }}</li>
+      <li>Ticket amount: {{ event.ticket_amount }}</li>
+      <h4>You do not have this one. You can <a href="{% url 'purchase' %}?name={{ event.name }}">buy it.</a></h4>
+    </ul>
+    {% else %}
+      <p>Event not found.</p>
+    {% endif %}
+  
+{% endblock %}

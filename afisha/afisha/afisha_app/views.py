@@ -11,7 +11,7 @@ from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from os import listdir
-
+from . import config
 
 def register(request):
     form_errors = None
@@ -40,12 +40,12 @@ def purchase_page(request):
     try:
         ticket = Ticket.objects.get(id=ticket_id)
     except Exception:
-        book = None
+        ticket = None
     else:
         if request.method == 'POST' and viewer.money >= ticket.price:
             with transaction.atomic():
                 viewer.money -= ticket.price
-                viewer.ticket.add(book)
+                viewer.ticket.add(ticket)
                 viewer.save()
             url = reverse('ticket')
             return HttpResponseRedirect(f'{url}?id={ticket_id}')
@@ -90,6 +90,7 @@ def profile_page(request):
         'money': viewer.money,
     }
 
+
     return render(
         request,
         'pages/profile.html',
@@ -97,19 +98,21 @@ def profile_page(request):
             'form': AddFundsForm(),
             'user_data': user_data,
             'form_errors': '; '.join(form_errors), 
-            'ticket': [ticket.name for ticket in viewer.tickets.all()],
+            'tickets': [ticket.name for ticket in viewer.tickets.all()],
         },
     )
+
 def custom_main(request):
     return render(
         request,
-        'index.html',
+        config.TEMPLATE_MAIN,
         context={
             'events': Event.objects.all().count(),
             'tickets': Ticket.objects.all().count(),
             'viewers': Viewer.objects.all().count(),
         },
     )
+    
 
 
 def catalog_view(cls_model, context_name, template):
@@ -140,7 +143,7 @@ def entity_view(cls_model, name, template):
             try:
                 context['viewer_has_ticket'] = bool(viewer.tickets.get(id=target_id))
             except Exception:
-                context['iewer_has_ticket'] = False
+                context['viewer_has_ticket'] = False
 
         return render(
             request,

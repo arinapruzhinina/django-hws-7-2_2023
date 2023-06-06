@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Events</h1>
+
+    {% if events_list %}
+    <ul>
+
+      {% for event in events_list %}
+      <li>
+        <a href="{% url 'event'%}?id={{event.id}}">{{ event.name }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no events for now..</p>
+    {% endif %}
+{% endblock %}

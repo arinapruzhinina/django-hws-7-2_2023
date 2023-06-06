@@ -46,6 +46,15 @@ event_types = (
 
 
 class Event(UUIDMixin, CreatedMixin, ModifiedMixin):
+    price =  models.DecimalField(
+        verbose_name=_('price'),
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        blank=False,
+        null=False, 
+        validators=[MinValueValidator(0)]
+    )
     name = models.CharField(_('name'), max_length=40)
     description = models.TextField(_('description'), blank=True, null=True)
     address = models.CharField(_('address'),max_length=100, blank=True, null=True)
@@ -66,7 +75,6 @@ class Event(UUIDMixin, CreatedMixin, ModifiedMixin):
 
     
 
-
 class Ticket(UUIDMixin, CreatedMixin, ModifiedMixin):
     price =  models.DecimalField(
         verbose_name=_('price'),
@@ -79,7 +87,7 @@ class Ticket(UUIDMixin, CreatedMixin, ModifiedMixin):
     )
     row = models.IntegerField(_('row'), blank=True, null=True, validators=[MaxValueValidator(11), MinValueValidator(1)])
     seat_num = models.IntegerField(_('seat number'),blank=True, null=True, validators=[MaxValueValidator(20), MinValueValidator(1)])
-    viewer = models.ForeignKey('Viewer', on_delete=models.CASCADE, null=True)
+    users = models.ForeignKey('Viewer', on_delete=models.CASCADE, null=True)
     event = models.ForeignKey('Event', on_delete=models.CASCADE, null=True)
     
 
@@ -103,7 +111,7 @@ class Ticket(UUIDMixin, CreatedMixin, ModifiedMixin):
             if (amount.row == self.row and amount.seat_num == self.seat_num):
                 return False  
         return True
-
+    
     def validate_seat_performance(self):
         return self.row and self.seat_num
     
@@ -129,14 +137,14 @@ class Ticket(UUIDMixin, CreatedMixin, ModifiedMixin):
                     'Both "row" and "seat number" fields must be presente',
                     params={'row': self.row, 'seat_num': self.seat_num}
                     )
-        age = self.viewer.age()
+        age = self.users.age()
         if age < self.event.age_minimum:
             raise ValidationError(
                     'Viewer is not old enough to attend this event', 
                     params={'age': age, 'min_age': self.event.age_minimum},
                 )
         
-        
+
 class EventTicket(UUIDMixin, CreatedMixin):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
@@ -151,7 +159,7 @@ def phone_validator(phone: str):
             f'The entered phone phone {phone} is incorrect, it must start with +7 and have 12 characters', 
             params={'phone': phone},)
         
-class Viewer(CreatedMixin, ModifiedMixin):
+class Viewer(CreatedMixin, ModifiedMixin, models.Model):
 
     
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
@@ -161,14 +169,14 @@ class Viewer(CreatedMixin, ModifiedMixin):
         default=0, 
         validators=[MinValueValidator(0)]
     )
-    name = models.CharField(_('name'), max_length=40)
-    surname = models.CharField(_('surname'), max_length=40)
+    # name = models.CharField(_('name'), max_length=40, blank=False, null=True)
+    # surname = models.CharField(_('surname'), max_length=40, blank=False, null=True)
     date_of_birth = models.DateField(_('date of birth'),blank=False, null=True )
     phone = models.CharField(_('phone'), max_length=12, blank=True, null=True, validators=[phone_validator])
     email = models.CharField(_('email'), max_length=64, blank=True, null=True, validators=[EmailValidator()])
-    
+    tickets = models.ManyToManyField(Ticket, through='ViewerTicket')
     def __str__(self):
-        return f'{self.name}, {self.surname}'
+        return f'{self.user.first_name} {self.user.last_name}'
     
     class Meta:
         db_table = '"afisha"."viewer"'
@@ -197,4 +205,3 @@ class ViewerTicket(UUIDMixin, CreatedMixin):
     class Meta:
         db_table = '"afisha"."viewer_ticket"'
         unique_together = (('viewer', 'ticket'),)
-

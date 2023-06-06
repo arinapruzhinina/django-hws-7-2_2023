@@ -1,0 +1,35 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Viewer page</h1>
+
+    {% if viewer %}
+
+    <h2>
+        <a> {{ viewer.first_name }} {{viewer.surname}}</a>
+    </h2>
+   
+    <ul>
+        <li>{{ viewer.money }}</li>
+        <li>{{ viewer.date_of_birth }}</li>
+    
+    </ul>
+
+    {% else %}
+      <p>Viewer not found.</p>
+    {% endif %}
+    {% if ticket %}
+      <ul>
+          <li>Row: {{ ticket.row }}</li>
+          <li>Seat number: {{ ticket.seat_num }}</li>
+      </ul>
+      {% if viewer_has_ticket %}
+        <h4>You already have this ticket. <a href="{% url 'ticket' %}?id={{ ticket.id }}"> Show it!</a></h4>
+      {% else %}
+        <h4>You do not have this one. You can <a href="{% url 'purchase' %}?id={{ ticket.id }}">buy it.</a></h4>
+      {% endif %}
+    {% else %}
+      <p>Ticket not found.</p>
+    {% endif %}
+{% endblock %}
+

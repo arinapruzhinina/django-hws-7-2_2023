@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Tickets</h1>
+
+    {% if tickets_list %}
+    <ul>
+
+      {% for ticket in tickets_list %}
+      <li>
+        <a href="{% url 'ticket'%}?id={{ticket.id}}">{{ ticket.id }}</a> 
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no ticket for now..</p>
+    {% endif %}
+{% endblock %}
