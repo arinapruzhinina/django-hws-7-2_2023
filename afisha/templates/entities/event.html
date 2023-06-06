@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Event page</h1>
+
+    {% if event %}
+    <ul>
+
+      <li>
+        <a>{{ event.name }}</a> ({{event.description}})
+      </li>
+    </ul>
+
+    {% else %}
+      <p>Event not found..</p>
+    {% endif %}
+{% endblock %}

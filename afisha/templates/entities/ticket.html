@@ -1,0 +1,35 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Ticket page</h1>
+
+    {% if ticket %}
+      <ul>
+          <li>Row: {{ ticket.row }}</li>
+          <li>Seat number: {{ ticket.seat_num }}</li>
+      </ul>
+      {% if viewer_has_ticket %}
+        <h4>You already have this ticket. <a href="{% url 'read' %}?id={{ book.id }}"> Read it now!</a></h4>
+      {% else %}
+        <h4>You do not have this one. You can <a href="{% url 'purchase' %}?id={{ book.id }}">buy it.</a></h4>
+      {% endif %}
+    {% else %}
+      <p>Book not found..</p>
+    {% endif %}
+{% endblock %}
+
+
+price =  models.DecimalField(
+    verbose_name=_('price'),
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    blank=False,
+    null=False, 
+    validators=[MinValueValidator(0)]
+)
+row = models.IntegerField(_('row'), blank=True, null=True, validators=[MaxValueValidator(11), MinValueValidator(1)])
+seat_num = models.IntegerField(_('seat number'),blank=True, null=True, validators=[MaxValueValidator(20), MinValueValidator(1)])
+viewer = models.ForeignKey('Viewer', on_delete=models.CASCADE, null=True)
+event = models.ForeignKey('Event', on_delete=models.CASCADE, null=True)
+
