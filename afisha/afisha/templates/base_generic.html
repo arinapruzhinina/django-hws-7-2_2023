@@ -1,17 +1,17 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   {% block title %}<title>Afisha</title>{% endblock %}
 </head>
 
-<body>
+
   {% block sidebar %}<!-- insert default navigation text for every page -->
   <ul class="sidebar-nav">
       {% if user.is_authenticated %}
         <li>User: <a href="{% url 'profile' %}">{{ user.get_username }}</a></li>
         <li><a href="{% url 'homepage' %}">Homepage</a></li>
         <li><a href="{% url 'viewers' %}">Viewers</a></li>
-        <li><a href="{% url 'tickets' %}">Tickets</a></li>
         <li><a href="{% url 'events' %}">Events</a></li>
         <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
       {% else %}

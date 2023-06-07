@@ -76,15 +76,7 @@ class Event(UUIDMixin, CreatedMixin, ModifiedMixin):
     
 
 class Ticket(UUIDMixin, CreatedMixin, ModifiedMixin):
-    price =  models.DecimalField(
-        verbose_name=_('price'),
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-        blank=False,
-        null=False, 
-        validators=[MinValueValidator(0)]
-    )
+    
     row = models.IntegerField(_('row'), blank=True, null=True, validators=[MaxValueValidator(11), MinValueValidator(1)])
     seat_num = models.IntegerField(_('seat number'),blank=True, null=True, validators=[MaxValueValidator(20), MinValueValidator(1)])
     users = models.ForeignKey('Viewer', on_delete=models.CASCADE, null=True)
@@ -174,7 +166,7 @@ class Viewer(CreatedMixin, ModifiedMixin, models.Model):
     date_of_birth = models.DateField(_('date of birth'),blank=False, null=True )
     phone = models.CharField(_('phone'), max_length=12, blank=True, null=True, validators=[phone_validator])
     email = models.CharField(_('email'), max_length=64, blank=True, null=True, validators=[EmailValidator()])
-    tickets = models.ManyToManyField(Ticket, through='ViewerTicket')
+    events = models.ManyToManyField(Event, through='EventViewer')
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
     
@@ -196,7 +188,14 @@ class Viewer(CreatedMixin, ModifiedMixin, models.Model):
         today = date.today()
         return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
 
-    
+class EventViewer(UUIDMixin, CreatedMixin):
+    viewer = models.ForeignKey(Viewer, on_delete=models.CASCADE, blank=False, null=False)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=False, null=False)
+
+    class Meta:
+        db_table = '"afisha"."event_viewer"'
+        unique_together = (('event', 'viewer'),)
+
    
 class ViewerTicket(UUIDMixin, CreatedMixin):
     viewer = models.ForeignKey(Viewer, on_delete=models.CASCADE)

@@ -2,16 +2,16 @@
 
 {% block content %}
 
-    <h4> You are going to buy: {{ ticket.name }}</h4>
-    <h5> The price: {{ ticket.price }}</h5>
+    <h4> You are going to buy: {{ event.id }}</h4>
+    <h5> The price: {{ event.price }}</h5>
     <h5> Funds available: {{ funds }} </h5>
     {% if enough_money %}
-        <form action="/purchase/?id={{ ticket.id }}" method="POST">
+        <form action="/purchase/?id={{ event.id }}" method="POST">
             {% csrf_token %}
             <input type="Submit" value="Buy">
         </form>
     {% else %}
-        <h5> Insufficient funds! You can add funds on <a href="{% url 'profile' %}">profile page.</a></h5>
+        <h5> You can add funds on <a href="{% url 'profile' %}">profile page.</a></h5>
     {% endif %}
 
 {% endblock %}

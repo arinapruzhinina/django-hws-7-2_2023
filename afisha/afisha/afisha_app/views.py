@@ -21,7 +21,7 @@ def register(request):
             user = form.save()
             Viewer.objects.create(user=user)
             return HttpResponseRedirect(reverse('profile'))
-        form_errors = form.error
+        form_errors = form.errors
     return render(
         request,
         'registration/register.html', 
@@ -36,27 +36,27 @@ def register(request):
 @auth_decorators.login_required
 def purchase_page(request):
     viewer = Viewer.objects.get(user=request.user)
-    ticket_id = request.GET.get('id', '')
+    event_id = request.GET.get('id', '')
     try:
-        ticket = Ticket.objects.get(id=ticket_id)
+        event = Event.objects.get(id=event_id)
     except Exception:
-        ticket = None
+        event = None
     else:
-        if request.method == 'POST' and viewer.money >= ticket.price:
+        if request.method == 'POST' and viewer.money >= event.price:
             with transaction.atomic():
-                viewer.money -= ticket.price
-                viewer.ticket.add(ticket)
+                viewer.money -= event.price
+                viewer.events.add(event)
                 viewer.save()
-            url = reverse('ticket')
-            return HttpResponseRedirect(f'{url}?id={ticket_id}')
+            url = reverse('event')
+            return HttpResponseRedirect(f'{url}?id={event_id}')
 
     return render(
         request,
         template_name='pages/purchase.html',
         context={
-            'ticket': ticket,
+            'event': event,
             'funds': viewer.money,
-            'enough_money': viewer.money - ticket.price >= 0,
+            'enough_money': viewer.money - event.price >= 0,
         },
     )
 
@@ -98,7 +98,7 @@ def profile_page(request):
             'form': AddFundsForm(),
             'user_data': user_data,
             'form_errors': '; '.join(form_errors), 
-            'tickets': [ticket.name for ticket in viewer.tickets.all()],
+            'events': [event.name for event in viewer.events.all()],
         },
     )
 
@@ -141,9 +141,9 @@ def entity_view(cls_model, name, template):
         if cls_model is Ticket:
             viewer = Viewer.objects.get(user=request.user)
             try:
-                context['viewer_has_ticket'] = bool(viewer.tickets.get(id=target_id))
+                context['viewer_has_event'] = bool(viewer.events.get(id=target_id))
             except Exception:
-                context['viewer_has_ticket'] = False
+                context['viewer_has_event'] = False
 
         return render(
             request,
