@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h4> You are going to buy: {{ event.id }}</h4>
+<h5> The price: {{ event.price }}</h5>
+<h5> Funds available: {{ funds }} </h5>
+{% if enough_money %}
+{% if event.tickets_amount > 0%}
+<form action="/purchase/?id={{ event.id }}" method="POST">
+    {% csrf_token %}
+    <input type="Submit" value="Buy">
+</form>
+{% else %}
+<p style="color: red">tikects are sold out</p>
+{%endif%}
+{% else %}
+<h5> You can add funds on <a href="{% url 'profile' %}">profile page.</a></h5>
+{% endif %}
+
+{% endblock %}

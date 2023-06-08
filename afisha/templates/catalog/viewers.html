@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Viewers</h1>
+
+    {% if viewers_list %}
+    <ul>
+
+      {% for viewer in viewers_list %}
+      <li>
+        <a href="{% url 'viewer'%}?id={{viewer.id}}">{{ viewer.first_name }} {{ viewer.last_name}}</a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no viewers.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Viewer page</h1>
+
+    {% if viewer %}
+
+    <h2>
+        <a> {{ viewer.user.first_name }} {{viewer.user.last_name}}</a>
+    </h2>
+   
+    <ul>
+        <li>Money: {{ viewer.money }}</li>
+        <li>Date of birth: {{ viewer.date_of_birth }}</li>
+    
+    </ul>
+
+    {% else %}
+      <p>Viewer not found.</p>
+    {% endif %}
+    
+{% endblock %}
+

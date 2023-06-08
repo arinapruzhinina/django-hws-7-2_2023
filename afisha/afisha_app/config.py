@@ -1,0 +1,1 @@
+TEMPLATE_MAIN = 'index.html'

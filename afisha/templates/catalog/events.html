@@ -1,0 +1,29 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Events</h1>
+<form action="{% url 'event_create' %}" method="post">
+    {% csrf_token %}
+    <h1>Вы можете создать свое событие:</h1>
+    {% for field in form%}
+        {{ field.label_tag }}
+        {{ field }}<br>
+    {% endfor %}
+    <button type="submit">Создать</button>
+</form>
+
+{% if events_list %}
+<ul>
+
+    {% for event in events_list %}
+    <li>
+        <a href="{% url 'event'%}?id={{event.id}}">{{ event.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% else %}
+<p>There are no events for now..</p>
+{% endif %}
+{% endblock %}
