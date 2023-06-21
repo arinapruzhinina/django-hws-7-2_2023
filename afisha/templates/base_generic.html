@@ -1,14 +1,80 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+ 
   {% block title %}<title>Afisha</title>{% endblock %}
+ 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+    
+    .sidebar-nav {
+      list-style-type: none;
+      padding: 0;
+      background-color: #e9ecef;
+      width: 200px;
+      height: 100vh;
+      position: fixed;
+    }
+
+    .sidebar-nav li {
+      padding: 8px 16px;
+    }
+
+    .sidebar-nav li a {
+      text-decoration: none;
+      color: #495057;
+    }
+
+    .sidebar-nav li a:hover {
+      background-color: #adb5bd;
+      color: white;
+    }
+
+    .content {
+      margin-left: 200px;
+      padding: 16px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin: 16px 0;
+    }
+
+    .step-links {
+      display: flex;
+      align-items: center;
+    }
+
+    .step-links a {
+      margin: 0 4px;
+      text-decoration: none;
+      color: #495057;
+    }
+
+    .step-links a:hover {
+      text-decoration: underline;
+    }
+
+    .step-links .current {
+      margin: 0 8px;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      color: #333;
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
 </head>
 
-
+<body>
   {% block sidebar %}<!-- insert default navigation text for every page -->
   <ul class="sidebar-nav">
-      {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
         <li>User: <a href="{% url 'profile' %}">{{ user.get_username }}</a></li>
         <li><a href="{% url 'homepage' %}">Homepage</a></li>
         <li><a href="{% url 'viewers' %}">Viewers</a></li>
@@ -21,10 +87,11 @@
       {% endif %}
   </ul>
   {% endblock %}
-  {% block content %}<!-- default content text (typically empty) -->{% endblock %}
-  {% if is_paginated %}
-  <div class="pagination">
-    <span class="step-links">
+  <div class="content">
+    {% block content %}<!-- default content text (typically empty) -->{% endblock %}
+    {% if is_paginated %}
+    <div class="pagination">
+      <span class="step-links">
         {% if page_obj.has_previous %}
             <a href="?page=1">&laquo; first</a>
             <a href="?page={{ page_obj.previous_page_number }}">previous</a>
@@ -32,14 +99,9 @@
   
         <span class="current">
             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
-  
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
+      </span>
+    </div>
+    {% endif %}
   </div>
-  {% endif %}
 </body>
 </html>

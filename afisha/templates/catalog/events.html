@@ -1,29 +1,104 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+<style>
+  form {
+    display: none;
+    flex-direction: column;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 16px;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+  }
+
+  form h1 {
+    margin-bottom: 16px;
+  }
+
+  form label {
+    font-weight: bold;
+    margin-top: 8px;
+  }
+
+  form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  form button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+
+  form button:hover {
+    background-color: #45a049;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  ul li {
+    margin-bottom: 8px;
+  }
+
+  ul li a {
+    text-decoration: none;
+    color: #000;
+  }
+
+  ul li a:hover {
+    text-decoration: underline;
+  }
+
+  .create-event-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  .create-event-button:hover {
+    background-color: #45a049;
+  }
+</style>
 
 <h1>Events</h1>
-<form action="{% url 'event_create' %}" method="post">
-    {% csrf_token %}
-    <h1>Вы можете создать свое событие:</h1>
-    {% for field in form%}
-        {{ field.label_tag }}
-        {{ field }}<br>
-    {% endfor %}
-    <button type="submit">Создать</button>
-</form>
+<a href="{% url 'event_create' %}">Create new event</a>
+
 
 {% if events_list %}
 <ul>
-
-    {% for event in events_list %}
-    <li>
-        <a href="{% url 'event'%}?id={{event.id}}">{{ event.name }}</a>
-    </li>
-    {% endfor %}
+  {% for event in events_list %}
+  <li>
+    <a href="{% url 'event'%}?id={{event.id}}">{{ event.name }}</a>
+  </li>
+  {% endfor %}
 </ul>
 
 {% else %}
 <p>There are no events for now..</p>
 {% endif %}
+
+<script>
+  function toggleForm() {
+    var form = document.getElementById("event-form");
+    if (form.style.display === "none") {
+      form.style.display = "flex";
+    } else {
+      form.style.display = "none";
+    }
+  }
+</script>
 {% endblock %}

@@ -2,23 +2,25 @@ from django.views import View
 
 from afisha_app.models import Event
 
+from django.shortcuts import render, redirect
+from afisha_app.forms import EventForm
+
+from django.shortcuts import render, redirect
+from afisha_app.forms import EventForm
 
 class EventCreateView(View):
 
+    def get(self, request, *args, **kwargs):
+        form = EventForm()
+        return render(request, 'event_create.html', {'form': form})
+
     def post(self, request, *args, **kwargs):
         viewer = request.user
-        try:
-            Event.objects.create(
-                name=request.POST['name'],
-                description=request.POST['description'],
-                price=request.POST['price'],
-                address=request.POST['address'],
-                age_minimum=request.POST['age_minimum'],
-                date=request.POST['date'],
-                start_time=request.POST['start_time'],
-                tickets_amount=request.POST['tickets_amount'],
-                type=request.POST['type'],
-                viewer=viewer,
-            )
-        except Exception as err:
-            raise Exception(f"Упс, что-то пошло не так: {err}")
+        form = EventForm(request.POST)
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.viewer = viewer
+            event.save()
+            return redirect('events')
+        else:
+            return render(request, 'event_create.html', {'form': form})
