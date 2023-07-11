@@ -1,3 +1,5 @@
+import datetime
+
 from django.views import View
 
 from afisha_app.models import Event
@@ -5,8 +7,6 @@ from afisha_app.models import Event
 from django.shortcuts import render, redirect
 from afisha_app.forms import EventForm
 
-from django.shortcuts import render, redirect
-from afisha_app.forms import EventForm
 
 class EventCreateView(View):
 
@@ -15,12 +15,32 @@ class EventCreateView(View):
         return render(request, 'event_create.html', {'form': form})
 
     def post(self, request, *args, **kwargs):
+        self.validate_date(request.POST['date'])
+        if self.error:
+            return render(request, 'event_create.html', context={
+                'error': "Дата не может быть указана в прошлом",
+                'form': EventForm()
+            })
         viewer = request.user
-        form = EventForm(request.POST)
-        if form.is_valid():
-            event = form.save(commit=False)
-            event.viewer = viewer
-            event.save()
+        try:
+            Event.objects.create(
+                name=request.POST['name'],
+                description=request.POST['description'],
+                price=request.POST['price'],
+                address=request.POST['address'],
+                age_minimum=request.POST['age_minimum'],
+                date=request.POST['date'],
+                start_time=request.POST['start_time'],
+                tickets_amount=request.POST['tickets_amount'],
+                type=request.POST['type'],
+                viewer=viewer,
+            )
             return redirect('events')
-        else:
-            return render(request, 'event_create.html', {'form': form})
+        except Exception as err:
+            raise Exception(f"Упс, что-то пошло не так: {err}")
+
+    def validate_date(self, date):
+        if date < str(datetime.date.today()):
+            self.error = "Дата не может быть указана в прошлом"
+            return
+        self.error = ""

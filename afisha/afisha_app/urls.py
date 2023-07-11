@@ -16,7 +16,7 @@ urlpatterns = [
     path('event/create/', EventCreateView.as_view(), name='event_create'),
     path('events/', EventListView.as_view(), name='events'),
 
-    path('ticket/', ticket_view, name='ticket'),
+    
     path('tickets/', TicketListView.as_view(), name='tickets'),
 
     path('viewer/', viewer_view, name='viewer'),

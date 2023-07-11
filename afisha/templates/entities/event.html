@@ -1,34 +1,37 @@
-
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Event page</h1>
+<h1>Event page</h1>
 
-    {% if event %}
-    
-    <h2>
-        <a> {{ event.name }}</a>
-    </h2>
-   <h3>Event information </h3>
-    <ul>
-      <li>Type: {{ event.type }}</li> 
-      <li>Address: {{ event.address }}</li>
-      <li>Date: {{ event.date }}</li>
-      <li>Start time: {{ event.start_time }}</li> 
-      <li>Decription: {{ event.description }}</li>
-      <li>Age minimum: {{ event.age_minimum }}</li>
-      <li>Ticket amount: {{ event.tickets_amount }}</li>
-    </ul>
-    {%if event.tickets_amount%}
-    {% if viewer_has_event %}
-      <h4> You can <a href="{% url 'purchase' %}?id={{ event.id }}">buy ticket to this event.</a></h4>
-      {% else %}
-      <h4>You can <a href="{% url 'purchase' %}?id={{ event.id }}">buy ticket to this event.</a></h4>
-    {% endif %}
+{% if event %}
+
+<h2>
+    <a> {{ event.name }}</a>
+</h2>
+<h3>Event information </h3>
+<ul>
+    <li>Type: {{ event.type }}</li>
+    <li>Address: {{ event.address }}</li>
+    <li>Date: {{ event.date }}</li>
+    <li>Start time: {{ event.start_time }}</li>
+    <li>Decription: {{ event.description }}</li>
+    <li>Age minimum: {{ event.age_minimum }}</li>
+    <li>Ticket amount: {{ event.tickets_amount }}</li>
+</ul>
+{%if event.tickets_amount%}
+    {% if age >= event.age_minimum %}
+        {% if viewer_has_event %}
+            <h4> You can <a href="{% url 'purchase' %}?id={{ event.id }}">buy ticket to this event.</a></h4>
+        {% else %}
+            <h4>You can <a href="{% url 'purchase' %}?id={{ event.id }}">buy ticket to this event.</a></h4>
+        {% endif %}
     {% else %}
+        <h4><a>You cant buy ticket for this event, because you small</a></h4>
+    {% endif%}
+{% else %}
     <p style="color: red">tikects are sold out</p>
-    {% endif %}
-      
-    {% endif %}
-  
+{% endif %}
+
+{% endif %}
+
 {% endblock %}

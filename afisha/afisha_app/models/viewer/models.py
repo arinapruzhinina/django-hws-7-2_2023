@@ -43,3 +43,4 @@ class Viewer(AbstractUser):
         app_label = "afisha_app"
         verbose_name = 'Viewer'
         verbose_name_plural = 'Viewers'
+        ordering = ['id']

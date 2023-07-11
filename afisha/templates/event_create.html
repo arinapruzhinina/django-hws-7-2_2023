@@ -1,57 +1,59 @@
-
 {% extends 'base_generic.html' %}
 
 {% block content %}
 <style>
-  .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f1f1f1;
-    padding: 20px;
-    border-radius: 5px;
-    max-width: 400px;
-    margin: 0 auto;
-  }
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f1f1f1;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 400px;
+        margin: 0 auto;
+    }
 
-  .form-container h4 {
-    color: #ff0000;
-    margin-bottom: 16px;
-  }
+    .form-container h4 {
+        color: #ff0000;
+        margin-bottom: 16px;
+    }
 
-  .form-container label {
-    display: block;
-    width: 100%;
-    margin-top: 8px;
-  }
+    .form-container label {
+        display: block;
+        width: 100%;
+        margin-top: 8px;
+    }
 
-  .form-container input[type="text"],
-  .form-container input[type="email"],
-  .form-container input[type="password"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
+    .form-container input[type="text"],
+    .form-container input[type="email"],
+    .form-container input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
 
-  .form-container input[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 16px;
-  }
+    .form-container input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 16px;
+    }
 
-  .form-container input[type="submit"]:hover {
-    background-color: #45a049;
-  }
+    .form-container input[type="submit"]:hover {
+        background-color: #45a049;
+    }
 </style>
-  <h2>Create new event</h2>
-  <form method="post" class="form-container">
+<h2>Create new event</h2>
+<form method="post" class="form-container">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Create</button>
-  </form>
+    {% if error %}
+    <p style="color: red">{{error}}</p>
+    {% endif%}
+</form>
 {% endblock %}

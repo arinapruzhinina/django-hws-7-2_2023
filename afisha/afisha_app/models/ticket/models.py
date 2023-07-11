@@ -21,6 +21,7 @@ class Ticket(BaseMixin):
         app_label = "afisha_app"
         verbose_name = 'Ticket'
         verbose_name_plural = 'Tickets'
+        ordering = ['id']
 
     def validate_ticket(self):
         try:

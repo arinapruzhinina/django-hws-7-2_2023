@@ -41,3 +41,4 @@ class Event(BaseMixin):
         app_label = "afisha_app"
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
+        ordering = ['id']

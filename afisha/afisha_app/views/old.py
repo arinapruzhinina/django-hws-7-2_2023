@@ -1,4 +1,6 @@
-from django.shortcuts import render
+import datetime
+
+from django.shortcuts import render, redirect
 from afisha_app.models import Event, Ticket, Viewer
 from django.views.generic import ListView
 from django.core.paginator import Paginator
@@ -34,13 +36,14 @@ def register(request):
 @auth_decorators.login_required
 def purchase_page(request):
     viewer = request.user
+    viewer_age = (datetime.date.today() - viewer.date_of_birth) // 365
     event_id = request.GET.get('id', '')
     try:
         event = Event.objects.get(id=event_id)
     except Exception:
         event = None
     else:
-        if request.method == 'POST' and viewer.money >= event.price:
+        if request.method == 'POST' and viewer.money >= event.price and viewer_age.days >= event.age_minimum:
             with transaction.atomic():
                 viewer.money -= event.price
                 event.tickets_amount -= 1
@@ -54,9 +57,10 @@ def purchase_page(request):
         request,
         template_name='pages/purchase.html',
         context={
+            'age': viewer_age.days,
             'event': event,
             'funds': viewer.money,
-            'enough_money': viewer.money - event.price >= 0,
+            'enough_money': viewer.money - event.price >= 0 if event else None,
         },
     )
 
@@ -124,9 +128,9 @@ def catalog_view(cls_model, context_name, template, form=None):
 
         def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
-            instances = cls_model.objects.all()
+            instances = cls_model.objects.all().order_by('id')
             paginator = Paginator(instances, 20)
-            page = self.request.GET.get('page')
+            page = self.request.GET.get('page', 1)
             page_obj = paginator.get_page(page)
             context['form'] = form
             context[f'{context_name}_list'] = page_obj
@@ -141,8 +145,10 @@ def entity_view(cls_model, name, template):
     def view(request):
         target_id = request.GET.get('id', '')
         context = {name: cls_model.objects.get(id=target_id)}
+        viewer = request.user
+        viewer_age = (datetime.date.today() - viewer.date_of_birth) // 365
+        context['age'] = viewer_age.days
         if cls_model is Ticket:
-            viewer = Viewer.objects.get(user=request.user)
             try:
                 context['viewer_has_event'] = bool(viewer.events.get(id=target_id))
             except Exception:
